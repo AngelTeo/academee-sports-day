@@ -3490,6 +3490,10 @@ async function bootApp(user){
 sb.auth.onAuthStateChange((event,session)=>{
   if(event==='SIGNED_IN'&&session){
     bootApp(session.user);
+  } else if(event==='TOKEN_REFRESHED'&&session){
+    // Token auto-refreshed silently — update nav user display only, no full reload
+    const navUser=document.getElementById('nav-user');
+    if(navUser)navUser.textContent=session.user.user_metadata?.full_name||session.user.email;
   } else if(event==='SIGNED_OUT'){
     document.getElementById('auth-overlay').classList.remove('hidden');
     document.getElementById('loading-overlay').classList.add('hidden');
