@@ -1956,28 +1956,22 @@ async function syncToSupabase(){
     {key:'fileTemplates',  value:JSON.stringify(D.fileTemplates||{})},
   ];
   await sb.from('app_settings').upsert(appSettings,{onConflict:'key'}).then(()=>{}).catch(()=>{});
-  // Upsert WA custom edits
-  const editEntries=Object.entries(D.waCustomEdits||{});
-  if(editEntries.length){
-    // Key format: "wa_p1_C" → msgId="wa_p1", version="C" (split on LAST underscore)
-    const weRows=editEntries.map(([k,v])=>{
-      const lastU=k.lastIndexOf('_');
-      const msgId=lastU>-1?k.slice(0,lastU):k;
-      const version=lastU>-1?k.slice(lastU+1):'A';
-      return{msg_id:k,version:version,content:v};
-    });
-    await sb.from('wa_custom_edits').upsert(weRows,{onConflict:'msg_id'});
+  // Save waCustomEdits as single JSON blob in app_settings (reliable, no composite PK issues)
+  if(D.waCustomEdits&&Object.keys(D.waCustomEdits).length>0){
+    await sb.from('app_settings').upsert(
+      [{key:'waCustomEdits',value:JSON.stringify(D.waCustomEdits)}],
+      {onConflict:'key'}
+    );
   }
 }
 
 /* ─── LOAD: Supabase → D ─── */
 async function loadFromSupabase(){
-  const[{data:evData},{data:taskData},{data:rcData},{data:wtData},{data:weData}]=await Promise.all([
+  const[{data:evData},{data:taskData},{data:rcData},{data:wtData}]=await Promise.all([
     sb.from('events').select('*'),
     sb.from('tasks').select('*'),
     sb.from('role_cards').select('*'),
     sb.from('wa_custom_templates').select('*'),
-    sb.from('wa_custom_edits').select('*'),
   ]);
 
   // Rebuild D.events with tasks
@@ -2001,7 +1995,8 @@ async function loadFromSupabase(){
   }));
   D.roleCards=(rcData&&rcData.length)?rcData.map(r=>({id:r.id,role:r.role,color:r.color,sections:r.sections||[]})):DEFAULT_ROLE_CARDS.map(rc=>JSON.parse(JSON.stringify(rc)));
   D.waCustomTemplates=(wtData||[]).map(t=>({id:t.id,name:t.name,tab:t.tab,phase:t.phase,content:t.content,createdAt:t.created_at}));
-  const edits={};(weData||[]).forEach(e=>{edits[e.msg_id]=e.content;});D.waCustomEdits=edits;
+  // waCustomEdits loaded from app_settings below (not wa_custom_edits table)
+  D.waCustomEdits=D.waCustomEdits||{};
   // Load app_settings (sdTaskTemplate, fileTemplates)
   const{data:asData}=await sb.from('app_settings').select('*');
   if(asData&&asData.length){
@@ -2009,6 +2004,7 @@ async function loadFromSupabase(){
       try{
         if(row.key==='sdTaskTemplate'){const parsed=JSON.parse(row.value);if(parsed&&parsed.length)D.sdTaskTemplate=parsed;}
         if(row.key==='fileTemplates'){const parsed=JSON.parse(row.value);if(parsed)D.fileTemplates=parsed;}
+        if(row.key==='waCustomEdits'){const parsed=JSON.parse(row.value);if(parsed)D.waCustomEdits=parsed;}
       }catch(e){}
     });
   }
