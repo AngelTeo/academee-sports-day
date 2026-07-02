@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Event System — Sports Day v19</title>
+<title>Event System — Sports Day v20</title>
 <meta property="og:title" content="Event System — Sports Day">
 <meta property="og:description" content="Academee · Event System · Login">
 <meta property="og:site_name" content="Academee">
@@ -441,7 +441,7 @@ nav button.active{background:rgba(255,255,255,.18);color:#fff;font-weight:600}
 <div class="sync-badge" id="sync-badge">✓ Synced</div>
 
 <nav>
-  <span class="logo">Academee</span><span class="ver" style="background:#F9CB42;color:#1B2A4A;font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-right:10px;flex-shrink:0">v19</span>
+  <span class="logo">Academee</span><span class="ver" style="background:#F9CB42;color:#1B2A4A;font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-right:10px;flex-shrink:0">v20</span>
   <button onclick="showPage('home')" id="nav-home" class="active">🏠 Home</button>
   <button onclick="showPage('calendar')" id="nav-calendar">📅 Calendar</button>
   <button onclick="showPage('tasks')" id="nav-tasks">✅ Tasks</button>
@@ -716,7 +716,7 @@ nav button.active{background:rgba(255,255,255,.18);color:#fff;font-weight:600}
 
 <!-- SETTINGS -->
 <div id="page-settings" class="page">
-  <div class="page-title">⚙ Settings <span style="font-size:11px;font-weight:700;background:#F9CB42;color:#1B2A4A;padding:2px 8px;border-radius:5px;vertical-align:middle;margin-left:6px">v19</span></div>
+  <div class="page-title">⚙ Settings <span style="font-size:11px;font-weight:700;background:#F9CB42;color:#1B2A4A;padding:2px 8px;border-radius:5px;vertical-align:middle;margin-left:6px">v20</span></div>
 
   <!-- Import file input (used by nav Import button) -->
   <input type="file" id="import-file" accept=".json" style="display:none" onchange="importFromFile(this)">
@@ -1838,7 +1838,7 @@ const CATEGORIES=[
 
 const DEPT_COLORS={'SRK':'#C45C5C','GAK':'#E8A04E','ATC':'#7AB05A','SRT':'#8B6CAE','School-wide':'#7870CC','Cross-dept':'#7870CC'};
 const STORAGE_KEY='academee_v6';
-const APP_VERSION='v19';
+const APP_VERSION='v20';
 
 function getCatForTask(task){
   if(task._catOverride)return task._catOverride;
@@ -3524,22 +3524,21 @@ sb.auth.onAuthStateChange((event,session)=>{
   const hasCode=urlParams.has('code');
 
   if(urlType==='recovery'||hasCode){
-    // Wait for Supabase SDK to exchange the code/token
-    await new Promise(r=>setTimeout(r,1500));
-    const{data:{session:rSess}}=await sb.auth.getSession();
-    if(rSess&&urlType==='recovery'){
-      // Password recovery — show reset form
-      document.getElementById('loading-overlay').classList.add('hidden');
-      showResetPassword();
-      return;
-    }
-    if(rSess&&!_appBooted){
-      // Magic Link login — boot normally
-      _appBooted=true;
-      bootApp(rSess.user);
-      return;
-    }
-    // No session — fall through to normal flow
+    // URL has auth code (Magic Link or Recovery) — let SDK exchange it.
+    // onAuthStateChange will fire SIGNED_IN or PASSWORD_RECOVERY.
+    // Just keep loading overlay visible and set a fallback timeout.
+    document.getElementById('loading-overlay').classList.remove('hidden');
+    document.getElementById('loading-msg').textContent='Verifying login...';
+    setTimeout(()=>{
+      if(!_appBooted){
+        // SDK didn't fire after 8s — show login page as fallback
+        document.getElementById('loading-overlay').classList.add('hidden');
+        document.getElementById('auth-overlay').classList.remove('hidden');
+      }
+    },8000);
+    // Clean URL to remove code param (prevents re-exchange on refresh)
+    window.history.replaceState({},'',window.location.pathname);
+    return;
   }
 
   const{data:{session}}=await sb.auth.getSession();
