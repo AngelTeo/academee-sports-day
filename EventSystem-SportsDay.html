@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Event System — Sports Day v16</title>
+<title>Event System — Sports Day v19</title>
 <meta property="og:title" content="Event System — Sports Day">
-<meta property="og:description" content="Academee · Sports Day Event System · Staff Login">
+<meta property="og:description" content="Academee · Event System · Login">
 <meta property="og:site_name" content="Academee">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -401,31 +401,21 @@ nav button.active{background:rgba(255,255,255,.18);color:#fff;font-weight:600}
 <!-- AUTH OVERLAY -->
 <div id="auth-overlay">
   <div class="auth-box">
-    <div class="auth-logo">🏫 Academee</div>
-    <div class="auth-sub">Sports Day Event System · Staff Login</div>
+    <div class="auth-logo">🏫 Sports Day</div>
+    <div class="auth-sub">Event System · Login</div>
     <div class="auth-err" id="auth-err"></div>
     <div id="auth-login-form">
-      <div class="fgrp" style="margin-bottom:14px">
-        <label>Email</label>
-        <input type="email" id="auth-email" placeholder="your@email.com" autocomplete="username"
-          style="width:100%;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:9px;font-size:14px;font-family:inherit">
+      <div style="margin-bottom:14px">
+        <input type="email" id="auth-email" placeholder="Email" autocomplete="username"
+          style="width:100%;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:9px;font-size:14px;font-family:inherit">
       </div>
-      <div class="fgrp" style="margin-bottom:20px">
-        <label>Password</label>
-        <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password"
-          style="width:100%;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:9px;font-size:14px;font-family:inherit"
+      <div style="margin-bottom:20px">
+        <input type="password" id="auth-password" placeholder="Password" autocomplete="current-password"
+          style="width:100%;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:9px;font-size:14px;font-family:inherit"
           onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <button onclick="doLogin()" class="btn btn-primary" style="width:100%;padding:11px;font-size:14px;border-radius:9px">Sign In</button>
-      <div style="display:flex;align-items:center;gap:10px;margin:16px 0 12px">
-        <div style="flex:1;height:1px;background:var(--bdr)"></div>
-        <span style="font-size:11px;color:var(--mut)">or</span>
-        <div style="flex:1;height:1px;background:var(--bdr)"></div>
-      </div>
-      <button onclick="doMagicLink()" class="btn" style="width:100%;padding:11px;font-size:14px;border-radius:9px;background:var(--sur);border:1.5px solid var(--bdr);color:var(--fg);font-family:inherit;cursor:pointer">✉ Send Magic Link</button>
-      <div style="text-align:center;margin-top:14px">
-        <span style="font-size:12px;color:var(--mut);cursor:pointer;text-decoration:underline" onclick="sendPasswordReset()">Forgot password?</span>
-      </div>
+      <button onclick="doMagicLink()" class="btn" style="width:100%;padding:11px;font-size:14px;border-radius:9px;background:var(--sur);border:1.5px solid var(--bdr);color:var(--fg);font-family:inherit;cursor:pointer;margin-top:10px">Send Magic Link</button>
     </div>
 
     <div id="auth-reset-form" style="display:none">
@@ -451,7 +441,7 @@ nav button.active{background:rgba(255,255,255,.18);color:#fff;font-weight:600}
 <div class="sync-badge" id="sync-badge">✓ Synced</div>
 
 <nav>
-  <span class="logo">Academee</span><span class="ver" style="background:#F9CB42;color:#1B2A4A;font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-right:10px;flex-shrink:0">v16</span>
+  <span class="logo">Academee</span><span class="ver" style="background:#F9CB42;color:#1B2A4A;font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-right:10px;flex-shrink:0">v19</span>
   <button onclick="showPage('home')" id="nav-home" class="active">🏠 Home</button>
   <button onclick="showPage('calendar')" id="nav-calendar">📅 Calendar</button>
   <button onclick="showPage('tasks')" id="nav-tasks">✅ Tasks</button>
@@ -726,7 +716,7 @@ nav button.active{background:rgba(255,255,255,.18);color:#fff;font-weight:600}
 
 <!-- SETTINGS -->
 <div id="page-settings" class="page">
-  <div class="page-title">⚙ Settings <span style="font-size:11px;font-weight:700;background:#F9CB42;color:#1B2A4A;padding:2px 8px;border-radius:5px;vertical-align:middle;margin-left:6px">v16</span></div>
+  <div class="page-title">⚙ Settings <span style="font-size:11px;font-weight:700;background:#F9CB42;color:#1B2A4A;padding:2px 8px;border-radius:5px;vertical-align:middle;margin-left:6px">v19</span></div>
 
   <!-- Import file input (used by nav Import button) -->
   <input type="file" id="import-file" accept=".json" style="display:none" onchange="importFromFile(this)">
@@ -1848,7 +1838,7 @@ const CATEGORIES=[
 
 const DEPT_COLORS={'SRK':'#C45C5C','GAK':'#E8A04E','ATC':'#7AB05A','SRT':'#8B6CAE','School-wide':'#7870CC','Cross-dept':'#7870CC'};
 const STORAGE_KEY='academee_v6';
-const APP_VERSION='v16';
+const APP_VERSION='v19';
 
 function getCatForTask(task){
   if(task._catOverride)return task._catOverride;
@@ -3383,7 +3373,7 @@ async function doResetPassword(){
 
 async function sendPasswordReset(){
   const email=document.getElementById('auth-email').value.trim();
-  if(!email){showAuthErr('Enter your email address first, then click Forgot password.');return;}
+  if(!email){showAuthErr('Please enter your email address first.');return;}
   const{error}=await sb.auth.resetPasswordForEmail(email,{
     redirectTo:'https://angelteo.github.io/academee-sports-day/EventSystem-SportsDay.html'
   });
@@ -3534,17 +3524,22 @@ sb.auth.onAuthStateChange((event,session)=>{
   const hasCode=urlParams.has('code');
 
   if(urlType==='recovery'||hasCode){
-    // Wait for Supabase to process the URL token
-    document.getElementById('loading-overlay').classList.add('hidden');
-    // Give SDK time to fire PASSWORD_RECOVERY event
+    // Wait for Supabase SDK to exchange the code/token
     await new Promise(r=>setTimeout(r,1500));
-    // If still no event fired, try getSession
     const{data:{session:rSess}}=await sb.auth.getSession();
-    if(rSess&&!_appBooted){
-      // Recovery session - show reset form
+    if(rSess&&urlType==='recovery'){
+      // Password recovery — show reset form
+      document.getElementById('loading-overlay').classList.add('hidden');
       showResetPassword();
+      return;
     }
-    return;
+    if(rSess&&!_appBooted){
+      // Magic Link login — boot normally
+      _appBooted=true;
+      bootApp(rSess.user);
+      return;
+    }
+    // No session — fall through to normal flow
   }
 
   const{data:{session}}=await sb.auth.getSession();
